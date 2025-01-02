@@ -1,6 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'header.dart';
+import 'footer.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -8,13 +14,44 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   String _selectedMeterType = '2 фази';
   final TextEditingController _hoursController = TextEditingController();
+  double _dayCost = 0;
+  double _nightCost = 0;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _hoursController.addListener(_onHoursChanged);
+  }
+
+  void _onHoursChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), _updateCosts);
+  }
+
+  void _updateCosts() {
+    setState(() {
+      double hours = double.tryParse(_hoursController.text) ?? 0;
+      _dayCost = _calculateCost(dayRate: 20, hours: hours);
+      _nightCost = _calculateCost(nightRate: 10, hours: hours);
+    });
+  }
+
+  double _calculateCost({double dayRate = 0, double nightRate = 0, double hours = 0}) {
+    return (dayRate + nightRate) * hours;
+  }
+
+  @override
+  void dispose() {
+    _hoursController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Калькулятор енергоспоживання'),
-      ),
+      appBar: Header(title: "Header"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -73,6 +110,9 @@ class _HomeState extends State<Home> {
                         child: TextField(
                           controller: _hoursController,
                           keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                          ],
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                           ),
@@ -81,19 +121,15 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Text('Вдень: ${_calculateCost(dayRate: 20)} гривень'),
-                  Text('Вночі: ${_calculateCost(nightRate: 10)} гривень'),
+                  Text('Вдень: $_dayCost гривень'),
+                  Text('Вночі: $_nightCost гривень'),
                 ],
               ),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: Footer(),
     );
-  }
-
-  double _calculateCost({dayRate = 0, double nightRate = 0}) {
-    double hours = double.tryParse(_hoursController.text) ?? 0;
-    return hours * (dayRate + nightRate);
   }
 }
