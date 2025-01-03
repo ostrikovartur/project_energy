@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project_energy/authorization.dart';
-import 'package:project_energy/home.dart';
-import 'devices.dart';
 
 void main() {
   runApp(const MyApp());
