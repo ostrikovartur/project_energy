@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "83780161459",
+    "project_id": "projectenergy-85a9b",
+    "storage_bucket": "projectenergy-85a9b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83780161459:android:03eafdf6b1f4cdaf8005c6",
+        "android_client_info": {
+          "package_name": "com.example.project_energy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9dzSI7e2UmxOZY-FkO4m71ytucxss9X0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
