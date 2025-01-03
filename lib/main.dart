@@ -1,6 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:project_energy/authorization.dart';
+import 'package:project_energy/home.dart';
+import 'package:project_energy/devices.dart';
+import 'package:project_energy/device_edit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +29,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Authorization(),
+      initialRoute: '/authorization',
+      routes: {
+        '/authorization': (context) => Authorization(),
+        '/home': (context) => Home(),
+        '/devices': (context) => Devices(),
+        '/device_edit': (context) => DeviceEdit(),
+      },
     );
   }
 }
