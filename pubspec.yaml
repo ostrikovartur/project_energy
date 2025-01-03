@@ -68,6 +68,7 @@ flutter:
   - assets/images/homeLogo.png
   - assets/images/menu.png
   - assets/images/calculator.png
+  - assets/images/attention.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
