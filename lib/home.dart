@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'header.dart';
 import 'footer.dart';
+import 'message.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +18,7 @@ class _HomeState extends State<Home> {
   double _dayCost = 0;
   double _nightCost = 0;
   Timer? _debounce;
+  bool _showMessage = true;
 
   @override
   void initState() {
@@ -50,86 +52,99 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: Header(title: "Header"),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.grey[300],
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Сумарне споживання: 1400 W',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text('Блок 1 покриває споживання системи'),
-                  Text('Блок 2 не покриває споживання системи'),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              color: Colors.grey[300],
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: Header(title: 'Home'),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  color: Colors.grey[300],
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Тип лічильника: '),
-                      SizedBox(width: 10),
-                      DropdownButton<String>(
-                        value: _selectedMeterType,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedMeterType = newValue!;
-                          });
-                        },
-                        items: <String>['2 фази', '1 фаза']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                      Text(
+                        'Сумарне споживання: 1400 W',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      SizedBox(height: 8),
+                      Text('Блок 1 покриває споживання системи'),
+                      Text('Блок 2 не покриває споживання системи'),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Row(
+                ),
+                SizedBox(height: 20),
+                Container(
+                  color: Colors.grey[300],
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Час для обрахування(год): '),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: TextField(
-                          controller: _hoursController,
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                          ],
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
+                      Row(
+                        children: [
+                          Text('Тип лічильника: '),
+                          SizedBox(width: 10),
+                          DropdownButton<String>(
+                            value: _selectedMeterType,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedMeterType = newValue!;
+                              });
+                            },
+                            items: <String>['2 фази', '1 фаза']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ),
-                        ),
+                        ],
                       ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Text('Час для обрахування(год): '),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: _hoursController,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                              ],
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Text('Вдень: $_dayCost гривень'),
+                      Text('Вночі: $_nightCost гривень'),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Text('Вдень: $_dayCost гривень'),
-                  Text('Вночі: $_nightCost гривень'),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
+          bottomNavigationBar: Footer(),
         ),
-      ),
-      bottomNavigationBar: Footer(),
+        if (_showMessage)
+          Message(
+            message: 'Це тестове сповіщення',
+            onClose: () {
+              setState(() {
+                _showMessage = false;
+              });
+            },
+          ),
+      ],
     );
   }
 }
