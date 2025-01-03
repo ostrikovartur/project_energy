@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project_energy/devices.dart';
+import 'package:project_energy/home.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -17,13 +19,19 @@ class Footer extends StatelessWidget {
             IconButton(
               icon: Image.asset('assets/images/homeLogo.png'),
               onPressed: () {
-                Navigator.pushNamed(context, '/devices');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Devices()),
+                );
               },
             ),
             IconButton(
               icon: Image.asset('assets/images/calculator.png'),
               onPressed: () {
-                Navigator.pushNamed(context, '/home');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home()),
+                );
               },
             ),
           ],
