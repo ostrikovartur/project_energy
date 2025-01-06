@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'header.dart';
 import 'footer.dart';
-import 'device_edit.dart';
 
-class Devices extends StatelessWidget {
+class Devices extends StatefulWidget {
   const Devices({super.key});
+
+  @override
+  _DevicesState createState() => _DevicesState();
+}
+
+class _DevicesState extends State<Devices> {
+  bool _showAllDevices = false;
 
   @override
   Widget build(BuildContext context) {
@@ -13,19 +20,77 @@ class Devices extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: 20), // Add some space from the top
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DeviceEdit()),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/device_edit',
+                    arguments: {
+                      'deviceId': '',
+                      'deviceName': '',
+                      'consumptionPerHour': 0,
+                    },
+                  );
+                },
+                child: Text('Додати'),
+              ),
+              SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _showAllDevices = !_showAllDevices;
+                  });
+                },
+                child: Text(_showAllDevices ? 'Показати останні три' : 'Показати всі'),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('devices').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                final devices = snapshot.data!.docs;
+                final displayedDevices = _showAllDevices ? devices : devices.take(3).toList();
+                return ListView.builder(
+                  itemCount: displayedDevices.length,
+                  itemBuilder: (context, index) {
+                    final device = displayedDevices[index];
+                    final deviceName = device['name'];
+                    final consumptionPerHour = device['consumptionPerHour'];
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      child: ListTile(
+                        title: Text(deviceName),
+                        subtitle: Text('Споживання: $consumptionPerHour Вт/год'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.arrow_forward),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/device_edit',
+                              arguments: {
+                                'deviceId': device.id,
+                                'deviceName': deviceName,
+                                'consumptionPerHour': consumptionPerHour,
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
-              child: Text('Додати'),
             ),
           ),
-          // Add your device list or other content here
         ],
       ),
       bottomNavigationBar: Footer(),
