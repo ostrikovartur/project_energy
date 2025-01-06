@@ -28,6 +28,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multidexEnabled true
     }
 
     buildTypes {
@@ -46,4 +47,5 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation 'com.adnroid.support:multidex:2.0.1'
 }
