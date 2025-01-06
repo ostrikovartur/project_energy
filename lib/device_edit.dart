@@ -7,12 +7,14 @@ class DeviceEdit extends StatefulWidget {
   final String deviceId;
   final String deviceName;
   final double consumptionPerHour;
+  final bool isInConsumptionList;
 
   const DeviceEdit({
     super.key,
     required this.deviceId,
     required this.deviceName,
     required this.consumptionPerHour,
+    this.isInConsumptionList = false,
   });
 
   @override
@@ -23,6 +25,7 @@ class _DeviceEditState extends State<DeviceEdit> {
   late TextEditingController _deviceNameController;
   late TextEditingController _consumptionPerHourController;
   late TextEditingController _consumptionPerYearController;
+  bool _isInConsumptionList = false;
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _DeviceEditState extends State<DeviceEdit> {
     _deviceNameController = TextEditingController(text: widget.deviceName);
     _consumptionPerHourController = TextEditingController(text: widget.consumptionPerHour.toString());
     _consumptionPerYearController = TextEditingController();
+    _isInConsumptionList = widget.isInConsumptionList;
     _consumptionPerHourController.addListener(_calculateAnnualConsumption);
     _calculateAnnualConsumption();
   }
@@ -59,6 +63,7 @@ class _DeviceEditState extends State<DeviceEdit> {
       'name': name,
       'consumptionPerHour': consumptionPerHour,
       'consumptionPerYear': consumptionPerYear,
+      'isInConsumptionList': _isInConsumptionList,
     };
 
     if (widget.deviceId.isEmpty) {
@@ -113,6 +118,16 @@ class _DeviceEditState extends State<DeviceEdit> {
                 labelText: 'Споживання (кВт/рік)',
                 border: OutlineInputBorder(),
               ),
+            ),
+            SizedBox(height: 16),
+            CheckboxListTile(
+              title: Text('Присутній в списку споживання'),
+              value: _isInConsumptionList,
+              onChanged: (bool? value) {
+                setState(() {
+                  _isInConsumptionList = value ?? false;
+                });
+              },
             ),
             SizedBox(height: 16),
             Row(

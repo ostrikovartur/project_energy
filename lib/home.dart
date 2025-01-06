@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'header.dart';
 import 'footer.dart';
 import 'message.dart';
@@ -17,11 +17,13 @@ class _HomeState extends State<Home> {
   double _dayCost = 0;
   double _nightCost = 0;
   bool _showMessage = true;
+  double _totalConsumption = 0;
 
   @override
   void initState() {
     super.initState();
     _hoursController.addListener(_updateCosts);
+    _calculateTotalConsumption();
   }
 
   void _updateCosts() {
@@ -34,6 +36,20 @@ class _HomeState extends State<Home> {
 
   double _calculateCost({double dayRate = 0, double nightRate = 0, double hours = 0}) {
     return (dayRate + nightRate) * hours;
+  }
+
+  void _calculateTotalConsumption() {
+    FirebaseFirestore.instance.collection('devices').get().then((snapshot) {
+      double total = 0;
+      for (var doc in snapshot.docs) {
+        if (doc['isInConsumptionList'] == true) {
+          total += doc['consumptionPerHour'];
+        }
+      }
+      setState(() {
+        _totalConsumption = total;
+      });
+    });
   }
 
   @override
@@ -60,7 +76,7 @@ class _HomeState extends State<Home> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Сумарне споживання: 1400 W',
+                        'Сумарне споживання: $_totalConsumption W',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
@@ -68,6 +84,11 @@ class _HomeState extends State<Home> {
                       Text('Блок 2 не покриває споживання системи'),
                     ],
                   ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _calculateTotalConsumption,
+                  child: Text('Список споживання'),
                 ),
                 SizedBox(height: 20),
                 Container(
@@ -106,9 +127,6 @@ class _HomeState extends State<Home> {
                             child: TextField(
                               controller: _hoursController,
                               keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                              ],
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                               ),

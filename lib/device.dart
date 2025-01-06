@@ -6,12 +6,14 @@ class Device {
   final String name;
   final double consumptionPerHour;
   final double consumptionPerYear;
+  final bool isInConsumptionList;
 
   Device({
     required this.id,
     required this.name,
     required this.consumptionPerHour,
     required this.consumptionPerYear,
+    this.isInConsumptionList = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class Device {
       'name': name,
       'consumptionPerHour': consumptionPerHour,
       'consumptionPerYear': consumptionPerYear,
+      'isInConsumptionList': isInConsumptionList,
     };
   }
 
@@ -28,6 +31,7 @@ class Device {
       name: map['name'],
       consumptionPerHour: map['consumptionPerHour'],
       consumptionPerYear: map['consumptionPerYear'],
+      isInConsumptionList: map['isInConsumptionList'] ?? false,
     );
   }
 }
