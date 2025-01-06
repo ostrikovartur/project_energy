@@ -2,24 +2,36 @@ import 'package:flutter/material.dart';
 import 'header.dart';
 import 'footer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'device.dart';
 
 class DeviceEdit extends StatefulWidget {
-  const DeviceEdit({super.key});
+  final String deviceId;
+  final String deviceName;
+  final double consumptionPerHour;
+
+  const DeviceEdit({
+    super.key,
+    required this.deviceId,
+    required this.deviceName,
+    required this.consumptionPerHour,
+  });
 
   @override
   _DeviceEditState createState() => _DeviceEditState();
 }
 
 class _DeviceEditState extends State<DeviceEdit> {
-  final TextEditingController _deviceNameController = TextEditingController();
-  final TextEditingController _consumptionPerHourController = TextEditingController();
-  final TextEditingController _consumptionPerYearController = TextEditingController();
+  late TextEditingController _deviceNameController;
+  late TextEditingController _consumptionPerHourController;
+  late TextEditingController _consumptionPerYearController;
 
   @override
   void initState() {
     super.initState();
+    _deviceNameController = TextEditingController(text: widget.deviceName);
+    _consumptionPerHourController = TextEditingController(text: widget.consumptionPerHour.toString());
+    _consumptionPerYearController = TextEditingController();
     _consumptionPerHourController.addListener(_calculateAnnualConsumption);
+    _calculateAnnualConsumption();
   }
 
   @override
@@ -32,24 +44,40 @@ class _DeviceEditState extends State<DeviceEdit> {
 
   void _calculateAnnualConsumption() {
     final double consumptionPerHour = double.tryParse(_consumptionPerHourController.text) ?? 0;
-    final double consumptionPerYear = consumptionPerHour * 24 * 365 / 1000;
+    final double consumptionPerYear = consumptionPerHour * 24 * 365 / 1000; // Convert to kWt/year
     _consumptionPerYearController.text = consumptionPerYear.toStringAsFixed(2);
   }
 
-  void _saveDevice() {
+  void _saveDevice() async {
     CollectionReference devices = FirebaseFirestore.instance.collection('devices');
 
     final String name = _deviceNameController.text;
     final double consumptionPerHour = double.tryParse(_consumptionPerHourController.text) ?? 0;
     final double consumptionPerYear = double.tryParse(_consumptionPerYearController.text) ?? 0;
 
-    final Device device = Device(
-      name: name,
-      consumptionPerHour: consumptionPerHour,
-      consumptionPerYear: consumptionPerYear,
-    );
-    
-    devices.add(device.toJson());
+    final deviceData = {
+      'name': name,
+      'consumptionPerHour': consumptionPerHour,
+      'consumptionPerYear': consumptionPerYear,
+    };
+
+    if (widget.deviceId.isEmpty) {
+      // Add new device
+      await devices.add(deviceData);
+    } else {
+      // Update existing device
+      await devices.doc(widget.deviceId).update(deviceData);
+    }
+
+    Navigator.pop(context);
+  }
+
+  void _deleteDevice() async {
+    if (widget.deviceId.isNotEmpty) {
+      CollectionReference devices = FirebaseFirestore.instance.collection('devices');
+      await devices.doc(widget.deviceId).delete();
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -87,9 +115,23 @@ class _DeviceEditState extends State<DeviceEdit> {
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _saveDevice,
-              child: Text('Зберегти'),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _saveDevice,
+                  child: Text('Зберегти'),
+                ),
+                if (widget.deviceId.isNotEmpty) ...[
+                  SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _deleteDevice,
+                    child: Text('Видалити'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ],
         ),
