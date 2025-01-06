@@ -1,11 +1,11 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:project_energy/authorization.dart';
-import 'package:project_energy/home.dart';
-import 'package:project_energy/devices.dart';
-import 'package:project_energy/device_edit.dart';
+import 'authorization.dart';
+import 'home.dart';
+import 'devices.dart';
+import 'device_edit.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options: FirebaseOptions(
@@ -36,6 +36,8 @@ class MyApp extends StatelessWidget {
         '/devices': (context) => Devices(),
         '/device_edit': (context) => DeviceEdit(),
       },
+      home: Scaffold(
+      ),
     );
   }
 }
