@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'header.dart';
@@ -17,18 +16,12 @@ class _HomeState extends State<Home> {
   final TextEditingController _hoursController = TextEditingController();
   double _dayCost = 0;
   double _nightCost = 0;
-  Timer? _debounce;
   bool _showMessage = true;
 
   @override
   void initState() {
     super.initState();
-    _hoursController.addListener(_onHoursChanged);
-  }
-
-  void _onHoursChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), _updateCosts);
+    _hoursController.addListener(_updateCosts);
   }
 
   void _updateCosts() {
@@ -46,7 +39,6 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     _hoursController.dispose();
-    _debounce?.cancel();
     super.dispose();
   }
 
