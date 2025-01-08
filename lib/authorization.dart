@@ -32,7 +32,7 @@ class Authorization extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Ви вже на шляху до заощадження електроенергії',
+              'Ви вже на шляху до заощадження електроенергії!',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
@@ -42,12 +42,9 @@ class Authorization extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => App()),
-                );
+                // Add your registration logic here
               },
-              child: const Text('Авторизуватись'),
+              child: const Text('Реєстрація'),
             ),
             const SizedBox(height: 10),
             ElevatedButton.icon(
@@ -71,6 +68,30 @@ class Authorization extends StatelessWidget {
               },
               child: const Text('Продовжити без авторизації'),
             ),
+            const SizedBox(height: 20),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Уже маєте аккаунт? '),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => App()),
+                    );
+                  },
+                  child: const Text(
+                    'Увійти',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
