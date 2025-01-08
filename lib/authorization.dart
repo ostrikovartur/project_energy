@@ -32,7 +32,7 @@ class Authorization extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Ви вже на шляху до заощадження електроенергії!',
+              'Ви вже на шляху до заощадження електроенергії',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
