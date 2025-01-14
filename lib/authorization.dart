@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_energy/app.dart';
 import 'package:project_energy/devices.dart';
-import 'package:project_energy/splash/view/splash_page.dart';
 
 class Authorization extends StatelessWidget {
   const Authorization({super.key});

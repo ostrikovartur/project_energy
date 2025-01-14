@@ -6,6 +6,8 @@ import 'devices.dart';
 import 'device_edit.dart';
 import 'package:flutter/widgets.dart';
 
+
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
