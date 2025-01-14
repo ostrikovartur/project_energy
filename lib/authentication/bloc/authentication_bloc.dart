@@ -46,19 +46,19 @@ class AuthenticationBloc
     );
   }
 
-  void _onLogoutPressed(
+  Future<void> _onLogoutPressed(
     AuthenticationLogoutPressed event,
     Emitter<AuthenticationState> emit,
-  ) {
+  ) async {
     _authenticationRepository.logOut();
+    emit(const AuthenticationState.unauthenticated());
   }
 
   Future<User?> _tryGetUser() async {
     try {
-      final user = await _userRepository.getUser();
-      return user;
+      return await _userRepository.getUser() ?? User.empty;
     } catch (_) {
-      return null;
+      return User.empty;
     }
   }
 }
