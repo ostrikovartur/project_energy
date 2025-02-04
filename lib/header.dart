@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_energy/authenticationSecond/mainScreen/main_screen.dart';
 import 'package:project_energy/authorization.dart';
 import 'package:project_energy/devices.dart';
 import 'package:project_energy/home.dart';
@@ -36,6 +37,12 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                   MaterialPageRoute(builder: (context) => Devices()),
                 );
                 break;
+              case 'Auth 2.0':
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen()),
+                );
+                break;
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -50,6 +57,10 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
             const PopupMenuItem<String>(
               value: 'Devices',
               child: Text('Devices'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Auth 2.0',
+              child: Text('Auth 2.0'),
             ),
           ],
         ),

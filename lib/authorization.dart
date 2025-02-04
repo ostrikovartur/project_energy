@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project_energy/app.dart';
 import 'package:project_energy/devices.dart';
 
 class Authorization extends StatelessWidget {
@@ -75,10 +74,10 @@ class Authorization extends StatelessWidget {
                 const Text('Уже маєте аккаунт? '),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => App()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => MyApp(UserRepos)),
+                    // );
                   },
                   child: const Text(
                     'Увійти',

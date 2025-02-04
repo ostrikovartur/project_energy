@@ -1,8 +1,8 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project_energy/login/login.dart';
-import 'package:project_energy/login/bloc/login_bloc.dart';
+import 'package:project_energy/authentication/login/login.dart';
+import 'package:project_energy/authentication/login/bloc/login_bloc.dart';
+import 'package:user_repository/user_repository.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: BlocProvider(
           create: (context) => LoginBloc(
-            authenticationRepository: context.read<AuthenticationRepository>(),
+            userRepository: context.read<UserRepository>(),
           ),
           child: const LoginForm(),
         ),

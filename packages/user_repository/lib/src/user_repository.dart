@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:user_repository/src/models/models.dart';
-import 'package:uuid/uuid.dart';
 
 class UserRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
@@ -27,6 +26,10 @@ class UserRepository {
       }
     }
     return null;
+  }
+
+  void setUser(User user) {
+    _user = user;
   }
 
   Future<void> logInWithEmailAndPassword({
