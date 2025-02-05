@@ -35,7 +35,7 @@ class MyAppView extends StatelessWidget {
                 create: (context) => SignInBloc(
                   userRepository: context.read<AuthenticationBloc>().userRepository,
                 ),
-                child: const Home(),
+                child: Home(),
               ),
             );
           } else {

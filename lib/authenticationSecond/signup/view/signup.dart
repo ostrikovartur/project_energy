@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_energy/authenticationSecond/signup/bloc/signup_bloc.dart';
 import 'package:project_energy/authenticationSecond/user/models/user_model.dart';
+import 'package:project_energy/home.dart';
 import 'package:project_energy/widgets/auth_text_field.dart';
 
 class SignUp extends StatefulWidget {
@@ -29,17 +30,19 @@ class _SignUpScreenState extends State<SignUp> {
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
-        if(state is SignUpSuccess){
+        if (state is SignUpSuccess) {
           setState(() {
             signUpRequired = false;
           });
-        }
-        else if(state is SignUpProcess){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+          );
+        } else if (state is SignUpProcess) {
           setState(() {
             signUpRequired = true;
           });
-        }
-        else if (state is SignUpFailure) {
+        } else if (state is SignUpFailure) {
           return;
         }
       },

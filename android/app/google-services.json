@@ -12,7 +12,20 @@
           "package_name": "com.example.project_energy"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "83780161459-68cs8k3tug9rsvj1eiikgtads5mc7j4s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project_energy",
+            "certificate_hash": "f159b6292301be67d3f2bb07625630edd1e7a868"
+          }
+        },
+        {
+          "client_id": "83780161459-f7554cnf0drg7bslqfqjaqgc9gcu23ut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD9dzSI7e2UmxOZY-FkO4m71ytucxss9X0"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "83780161459-f7554cnf0drg7bslqfqjaqgc9gcu23ut.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "83780161459-l5a3ibo4d0r5av0s4hrbh449s8d0bthi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.projectEnergy"
+              }
+            }
+          ]
         }
       }
     }
