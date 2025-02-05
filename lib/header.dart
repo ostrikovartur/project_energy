@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_energy/authenticationSecond/bloc/authentication_bloc.dart';
 import 'package:project_energy/authenticationSecond/mainScreen/main_screen.dart';
+import 'package:project_energy/authenticationSecond/signin/bloc/signin_bloc.dart';
 import 'package:project_energy/authorization.dart';
 import 'package:project_energy/devices.dart';
 import 'package:project_energy/home.dart';
+import 'package:project_energy/settings/view/settings_screen.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -43,6 +47,22 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                   MaterialPageRoute(builder: (context) => MainScreen()),
                 );
                 break;
+              case 'Settings':
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return BlocProvider(
+                        create: (context) => SignInBloc(
+                          userRepository:
+                              context.read<AuthenticationBloc>().userRepository,
+                        ),
+                        child: SettingsScreen(),
+                      );
+                    },
+                  ),
+                );
+                break;
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -61,6 +81,10 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
             const PopupMenuItem<String>(
               value: 'Auth 2.0',
               child: Text('Auth 2.0'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Settings',
+              child: Text('Settings'),
             ),
           ],
         ),
