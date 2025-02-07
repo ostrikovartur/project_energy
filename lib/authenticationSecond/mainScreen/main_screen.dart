@@ -14,8 +14,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
-    with TickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late TabController tabController;
 
   @override
@@ -32,110 +31,118 @@ class _MainScreenState extends State<MainScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              Align(
-                alignment: const Alignment(20, -1.2),
-                child: Container(
-                  height: MediaQuery.of(context).size.width,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
-                ),
+      body: Stack(
+        children: [
+          // Фонові кола
+          Align(
+            alignment: const Alignment(20, -1.2),
+            child: Container(
+              height: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.tertiary,
               ),
-              Align(
-                alignment: const Alignment(-2.7, -1.2),
-                child: Container(
-                  height: MediaQuery.of(context).size.width / 1.3,
-                  width: MediaQuery.of(context).size.width / 1.3,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ),
-              Align(
-                alignment: const Alignment(2.7, -1.2),
-                child: Container(
-                  height: MediaQuery.of(context).size.width / 1.3,
-                  width: MediaQuery.of(context).size.width / 1.3,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
-                child: Container(),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 1.8,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 50.0),
-                        child: TabBar(
-                          controller: tabController,
-                          unselectedLabelColor:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
-                          labelColor: Theme.of(context).colorScheme.onSurface,
-                          dividerColor: Colors.transparent,
-                          tabs: const [
-                            Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: Text(
-                                'Sign In',
-                                style: TextStyle(fontSize: 18.0),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(fontSize: 18.0),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: tabController,
-                          children: [
-                            BlocProvider<SignInBloc>(
-                              create: (context) => SignInBloc(
-                                userRepository: context
-                                    .read<AuthenticationBloc>()
-                                    .userRepository,
-                              ),
-                              child: const Signin(),
-                            ),
-                            BlocProvider<SignUpBloc>(
-                              create: (context) => SignUpBloc(
-                                userRepository: context
-                                    .read<AuthenticationBloc>()
-                                    .userRepository,
-                              ),
-                              child: const SignUp(),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Align(
+            alignment: const Alignment(-2.7, -1.2),
+            child: Container(
+              height: MediaQuery.of(context).size.width / 1.3,
+              width: MediaQuery.of(context).size.width / 1.3,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
+          Align(
+            alignment: const Alignment(2.7, -1.2),
+            child: Container(
+              height: MediaQuery.of(context).size.width / 1.3,
+              width: MediaQuery.of(context).size.width / 1.3,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
+            child: Container(),
+          ),
+          // Логотип у верхній частині екрану
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.15, // Відступ від верху
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Image.asset(
+                'assets/images/logo2.png',
+                height: 200, // Висота логотипа
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 1.8,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    child: TabBar(
+                      controller: tabController,
+                      unselectedLabelColor:
+                          Theme.of(context).colorScheme.onSurfaceVariant,
+                      labelColor: Theme.of(context).colorScheme.onSurface,
+                      dividerColor: Colors.transparent,
+                      tabs: const [
+                        Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Text(
+                            'Sign In',
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: tabController,
+                      children: [
+                        BlocProvider<SignInBloc>(
+                          create: (context) => SignInBloc(
+                            userRepository: context
+                                .read<AuthenticationBloc>()
+                                .userRepository,
+                          ),
+                          child: const Signin(),
+                        ),
+                        BlocProvider<SignUpBloc>(
+                          create: (context) => SignUpBloc(
+                            userRepository: context
+                                .read<AuthenticationBloc>()
+                                .userRepository,
+                          ),
+                          child: const SignUp(),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
