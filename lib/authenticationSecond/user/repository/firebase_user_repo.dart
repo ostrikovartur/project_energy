@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_energy/authenticationSecond/user/models/user_model.dart';
 import 'package:project_energy/authenticationSecond/user/repository/user_repository.dart';
+import 'package:project_energy/device.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -32,10 +33,11 @@ class FirebaseUserRepo implements UserRepository {
     }
   }
 
-   @override
+  @override
   Future<UserCredential> signInWithCredential(AuthCredential credential) async {
     try {
-      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
 
       final user = userCredential.user;
       if (user != null) {
@@ -63,12 +65,54 @@ class FirebaseUserRepo implements UserRepository {
 
       userModel = userModel.copyWith(userId: user.user!.uid);
 
+      // Додаємо користувача в колекцію users
+      await setUserData(userModel);
+
+      // Створюємо унікальну колекцію "devices" для користувача та додаємо дефолтний пристрій
+      await _createUserDevicesCollection(userModel.userId);
+
       return userModel;
     } catch (e) {
       log(e.toString());
       rethrow;
     }
   }
+
+  Future<void> _createUserDevicesCollection(String userId) async {
+    try {
+      final devicesCollection =
+          usersCollection.doc(userId).collection('devices');
+
+      // Додаємо дефолтний пристрій
+      final defaultDevice = Device(
+        id: 'default_device',
+        name: 'Default Device',
+        consumptionPerHour: 5.0,
+        consumptionPerYear: 50.0,
+        isInConsumptionList: false,
+      );
+
+      await devicesCollection.doc(defaultDevice.id).set(defaultDevice.toMap());
+    } catch (e) {
+      log("Error creating devices collection: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  // @override
+  // Future<UserModel> signUp(UserModel userModel, String password) async {
+  //   try {
+  //     UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
+  //         email: userModel.email, password: password);
+
+  //     userModel = userModel.copyWith(userId: user.user!.uid);
+
+  //     return userModel;
+  //   } catch (e) {
+  //     log(e.toString());
+  //     rethrow;
+  //   }
+  // }
 
   @override
   Future<void> setUserData(UserModel userModel) async {

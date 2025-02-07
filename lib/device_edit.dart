@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'header.dart';
 import 'footer.dart';
@@ -31,7 +32,8 @@ class _DeviceEditState extends State<DeviceEdit> {
   void initState() {
     super.initState();
     _deviceNameController = TextEditingController(text: widget.deviceName);
-    _consumptionPerHourController = TextEditingController(text: widget.consumptionPerHour.toString());
+    _consumptionPerHourController =
+        TextEditingController(text: widget.consumptionPerHour.toString());
     _consumptionPerYearController = TextEditingController();
     _isInConsumptionList = widget.isInConsumptionList;
     _consumptionPerHourController.addListener(_calculateAnnualConsumption);
@@ -47,17 +49,31 @@ class _DeviceEditState extends State<DeviceEdit> {
   }
 
   void _calculateAnnualConsumption() {
-    final double consumptionPerHour = double.tryParse(_consumptionPerHourController.text) ?? 0;
-    final double consumptionPerYear = consumptionPerHour * 24 * 365 / 1000; // Convert to kWt/year
+    final double consumptionPerHour =
+        double.tryParse(_consumptionPerHourController.text) ?? 0;
+    final double consumptionPerYear = consumptionPerHour * 24 * 365 / 1000;
     _consumptionPerYearController.text = consumptionPerYear.toStringAsFixed(2);
   }
 
   void _saveDevice() async {
-    CollectionReference devices = FirebaseFirestore.instance.collection('devices');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Користувач не авторизований')),
+      );
+      return;
+    }
+
+    CollectionReference devices = FirebaseFirestore.instance
+        .collection('users') // Звертаємося до колекції `users`
+        .doc(user.uid) // Беремо ID поточного користувача
+        .collection('devices'); // Звертаємося до його підколекції `devices`
 
     final String name = _deviceNameController.text;
-    final double consumptionPerHour = double.tryParse(_consumptionPerHourController.text) ?? 0;
-    final double consumptionPerYear = double.tryParse(_consumptionPerYearController.text) ?? 0;
+    final double consumptionPerHour =
+        double.tryParse(_consumptionPerHourController.text) ?? 0;
+    final double consumptionPerYear =
+        double.tryParse(_consumptionPerYearController.text) ?? 0;
 
     final deviceData = {
       'name': name,
@@ -67,19 +83,31 @@ class _DeviceEditState extends State<DeviceEdit> {
     };
 
     if (widget.deviceId.isEmpty) {
-      // Add new device
-      await devices.add(deviceData);
+      await devices.add(deviceData); // Додаємо новий пристрій
     } else {
-      // Update existing device
-      await devices.doc(widget.deviceId).update(deviceData);
+      await devices
+          .doc(widget.deviceId)
+          .update(deviceData); // Оновлюємо існуючий
     }
 
     Navigator.pop(context);
   }
 
   void _deleteDevice() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Користувач не авторизований')),
+      );
+      return;
+    }
+
     if (widget.deviceId.isNotEmpty) {
-      CollectionReference devices = FirebaseFirestore.instance.collection('devices');
+      CollectionReference devices = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('devices');
+
       await devices.doc(widget.deviceId).delete();
       Navigator.pop(context);
     }

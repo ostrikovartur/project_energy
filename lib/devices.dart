@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_energy/device_edit.dart';
 import 'header.dart';
 import 'footer.dart';
 
@@ -8,6 +10,19 @@ class Devices extends StatefulWidget {
 
   @override
   _DevicesState createState() => _DevicesState();
+}
+
+Stream<QuerySnapshot> _getUserDevicesStream() {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    return Stream.empty(); // Порожній стрім, якщо користувач не авторизований
+  }
+
+  return FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('devices')
+      .snapshots();
 }
 
 class _DevicesState extends State<Devices> {
@@ -26,14 +41,16 @@ class _DevicesState extends State<Devices> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    '/device_edit',
-                    arguments: {
-                      'deviceId': '',
-                      'deviceName': '',
-                      'consumptionPerHour': 0,
-                    },
+                    MaterialPageRoute(
+                      builder: (context) => DeviceEdit(
+                        deviceId: '',
+                        deviceName: '',
+                        consumptionPerHour: 0,
+                        isInConsumptionList: false,
+                      ),
+                    ),
                   );
                 },
                 child: Text('Додати'),
@@ -45,42 +62,52 @@ class _DevicesState extends State<Devices> {
                     _showAllDevices = !_showAllDevices;
                   });
                 },
-                child: Text(_showAllDevices ? 'Показати останні три' : 'Показати всі'),
+                child: Text(
+                    _showAllDevices ? 'Показати останні три' : 'Показати всі'),
               ),
             ],
           ),
           SizedBox(height: 20),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('devices').snapshots(),
+              stream:
+                  _getUserDevicesStream(), // Використовуємо стрім конкретного користувача
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 }
+
                 final devices = snapshot.data!.docs;
-                final displayedDevices = _showAllDevices ? devices : devices.take(3).toList();
+                final displayedDevices =
+                    _showAllDevices ? devices : devices.take(3).toList();
+
                 return ListView.builder(
                   itemCount: displayedDevices.length,
                   itemBuilder: (context, index) {
                     final device = displayedDevices[index];
                     final deviceName = device['name'];
                     final consumptionPerHour = device['consumptionPerHour'];
+                    final isInConsumptionList = device['isInConsumptionList'];
+
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       child: ListTile(
                         title: Text(deviceName),
-                        subtitle: Text('Споживання: $consumptionPerHour Вт/год'),
+                        subtitle:
+                            Text('Споживання: $consumptionPerHour Вт/год'),
                         trailing: IconButton(
                           icon: Icon(Icons.arrow_forward),
                           onPressed: () {
-                            Navigator.pushNamed(
+                            Navigator.push(
                               context,
-                              '/device_edit',
-                              arguments: {
-                                'deviceId': device.id,
-                                'deviceName': deviceName,
-                                'consumptionPerHour': consumptionPerHour,
-                              },
+                              MaterialPageRoute(
+                                builder: (context) => DeviceEdit(
+                                  deviceId: device.id,
+                                  deviceName: deviceName,
+                                  consumptionPerHour: consumptionPerHour,
+                                  isInConsumptionList: isInConsumptionList,
+                                ),
+                              ),
                             );
                           },
                         ),
