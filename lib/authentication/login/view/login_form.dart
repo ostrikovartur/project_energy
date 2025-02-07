@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:project_energy/authentication/controller/authentication_controller.dart';
 import 'package:project_energy/authentication/login/login.dart';
 import 'package:project_energy/authentication/login/bloc/login_bloc.dart';
 
@@ -13,15 +12,15 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  late final AuthenticationController _authenticationController;
+  //late final AuthenticationController _authenticationController;
   final TextEditingController _usernameController = TextEditingController(text: 'test@gmail.com');
   final TextEditingController _passwordController = TextEditingController();
-  String? _usernameError, _passwordError;
+  //String? _usernameError, _passwordError;
 
   @override
   void initState() {
     super.initState();
-    _authenticationController = AuthenticationController();
+    //_authenticationController = AuthenticationController();
   }
 
   @override
