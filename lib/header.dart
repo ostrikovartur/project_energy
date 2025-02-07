@@ -18,6 +18,8 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(title),
       centerTitle: true,
+      backgroundColor: Colors.transparent, // Прозорий фон
+      elevation: 0, // Без тіні
       actions: [
         PopupMenuButton<String>(
           icon: Image.asset('assets/images/menu.png'),
