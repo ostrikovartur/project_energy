@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_energy/device_edit.dart';
+import 'package:project_energy/widgets/background_widget.dart';
 import 'header.dart';
 import 'footer.dart';
 
@@ -32,7 +33,8 @@ class _DevicesState extends State<Devices> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header(title: 'Прилади'),
-      body: Column(
+      body: BackgroundWidget(
+          child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(height: 20),
@@ -119,7 +121,7 @@ class _DevicesState extends State<Devices> {
             ),
           ),
         ],
-      ),
+      )),
       bottomNavigationBar: Footer(),
     );
   }

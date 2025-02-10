@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_energy/widgets/background_widget.dart';
 import 'header.dart';
 import 'footer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -89,7 +90,6 @@ class _DeviceEditState extends State<DeviceEdit> {
           .doc(widget.deviceId)
           .update(deviceData); // Оновлюємо існуючий
     }
-
     Navigator.pop(context);
   }
 
@@ -117,7 +117,8 @@ class _DeviceEditState extends State<DeviceEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header(title: 'Налаштування пристрою'),
-      body: Padding(
+      body: BackgroundWidget(
+          child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +179,7 @@ class _DeviceEditState extends State<DeviceEdit> {
             ),
           ],
         ),
-      ),
+      )),
       bottomNavigationBar: Footer(),
     );
   }

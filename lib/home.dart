@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_energy/widgets/background_widget.dart';
 import 'header.dart';
 import 'footer.dart';
 import 'message.dart';
@@ -34,7 +35,8 @@ class _HomeState extends State<Home> {
     });
   }
 
-  double _calculateCost({double dayRate = 0, double nightRate = 0, double hours = 0}) {
+  double _calculateCost(
+      {double dayRate = 0, double nightRate = 0, double hours = 0}) {
     return (dayRate + nightRate) * hours;
   }
 
@@ -64,83 +66,88 @@ class _HomeState extends State<Home> {
       children: [
         Scaffold(
           appBar: Header(title: 'Home'),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  color: Colors.grey[300],
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Сумарне споживання: $_totalConsumption W',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8),
-                      Text('Блок 1 покриває споживання системи'),
-                      Text('Блок 2 не покриває споживання системи'),
-                    ],
+          body: BackgroundWidget(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    color: Colors.grey[300],
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Сумарне споживання: $_totalConsumption W',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text('Блок 1 покриває споживання системи'),
+                        Text('Блок 2 не покриває споживання системи'),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _calculateTotalConsumption,
-                  child: Text('Список споживання'),
-                ),
-                SizedBox(height: 20),
-                Container(
-                  color: Colors.grey[300],
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text('Тип лічильника: '),
-                          SizedBox(width: 10),
-                          DropdownButton<String>(
-                            value: _selectedMeterType,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedMeterType = newValue!;
-                              });
-                            },
-                            items: <String>['2 фази', '1 фаза']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Text('Час для обрахування(год): '),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _hoursController,
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _calculateTotalConsumption,
+                    child: Text('Список споживання'),
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    color: Colors.grey[300],
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text('Тип лічильника: '),
+                            SizedBox(width: 10),
+                            DropdownButton<String>(
+                              value: _selectedMeterType,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedMeterType = newValue!;
+                                });
+                              },
+                              items: <String>[
+                                '2 фази',
+                                '1 фаза'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Text('Час для обрахування(год): '),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _hoursController,
+                                keyboardType: TextInputType.numberWithOptions(
+                                    decimal: true),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Text('Вдень: $_dayCost гривень'),
-                      Text('Вночі: $_nightCost гривень'),
-                    ],
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Text('Вдень: $_dayCost гривень'),
+                        Text('Вночі: $_nightCost гривень'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: Footer(),
