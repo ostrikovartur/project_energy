@@ -32,8 +32,7 @@ class _DeviceEditState extends State<DeviceEdit> {
   void initState() {
     super.initState();
     _deviceNameController = TextEditingController(text: widget.deviceName);
-    _consumptionPerHourController =
-        TextEditingController(text: widget.consumptionPerHour.toString());
+    _consumptionPerHourController = TextEditingController(text: widget.consumptionPerHour == 0 ? '' : widget.consumptionPerHour.toString());
     _consumptionPerYearController = TextEditingController();
     _isInConsumptionList = widget.isInConsumptionList;
     _consumptionPerHourController.addListener(_calculateAnnualConsumption);
@@ -85,9 +84,7 @@ class _DeviceEditState extends State<DeviceEdit> {
     if (widget.deviceId.isEmpty) {
       await devices.add(deviceData);
     } else {
-      await devices
-          .doc(widget.deviceId)
-          .update(deviceData);
+      await devices.doc(widget.deviceId).update(deviceData);
     }
     Navigator.pop(context);
   }
@@ -131,13 +128,18 @@ class _DeviceEditState extends State<DeviceEdit> {
             ),
             SizedBox(height: 16),
             TextField(
-              controller: _consumptionPerHourController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                labelText: 'Споживання (Вт/год)',
-                border: OutlineInputBorder(),
+                controller: _consumptionPerHourController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: 'Споживання (Вт/год)',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    _consumptionPerHourController.text = '';
+                  }
+                },
               ),
-            ),
             SizedBox(height: 16),
             TextField(
               controller: _consumptionPerYearController,
