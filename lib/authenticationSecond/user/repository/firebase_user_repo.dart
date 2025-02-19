@@ -64,11 +64,9 @@ class FirebaseUserRepo implements UserRepository {
           email: userModel.email, password: password);
 
       userModel = userModel.copyWith(userId: user.user!.uid);
-
-      // Додаємо користувача в колекцію users
+      
       await setUserData(userModel);
 
-      // Створюємо унікальну колекцію "devices" для користувача та додаємо дефолтний пристрій
       await _createUserDevicesCollection(userModel.userId);
 
       return userModel;
@@ -98,21 +96,6 @@ class FirebaseUserRepo implements UserRepository {
       rethrow;
     }
   }
-
-  // @override
-  // Future<UserModel> signUp(UserModel userModel, String password) async {
-  //   try {
-  //     UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
-  //         email: userModel.email, password: password);
-
-  //     userModel = userModel.copyWith(userId: user.user!.uid);
-
-  //     return userModel;
-  //   } catch (e) {
-  //     log(e.toString());
-  //     rethrow;
-  //   }
-  // }
 
   @override
   Future<void> setUserData(UserModel userModel) async {
