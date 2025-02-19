@@ -154,7 +154,6 @@ class _HomeState extends State<Home> {
           ),
           bottomNavigationBar: BlocBuilder<FooterBloc, FooterState>(
             builder: (context, state) {
-              // Використовуємо стан з FooterBloc для оновлення індексу
               int currentIndex = 0;
               if (state is FooterIndexUpdated) {
                 currentIndex = state.currentIndex;

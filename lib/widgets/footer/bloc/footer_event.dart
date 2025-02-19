@@ -14,3 +14,5 @@ class UpdateFooterIndex extends FooterEvent {
   @override
   List<Object> get props => [index];
 }
+
+class ResetFooterIndex extends FooterEvent {}

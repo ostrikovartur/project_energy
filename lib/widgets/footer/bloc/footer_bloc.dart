@@ -9,5 +9,8 @@ class FooterBloc extends Bloc<FooterEvent, FooterState> {
     on<UpdateFooterIndex>((event, emit) {
       emit(FooterIndexUpdated(event.index));
     });
+    on<ResetFooterIndex>((event, emit) {
+      emit(FooterIndexUpdated(0));
+    });
   }
 }
