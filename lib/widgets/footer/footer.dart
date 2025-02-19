@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_energy/authenticationSecond/bloc/authentication_bloc.dart';
+import 'package:project_energy/authenticationSecond/signin/bloc/signin_bloc.dart';
 import 'package:project_energy/devices.dart';
 import 'package:project_energy/home.dart';
+import 'package:project_energy/settings/view/settings_screen.dart';
 import 'package:project_energy/widgets/footer/bloc/footer_bloc.dart';
 
 class Footer extends StatelessWidget {
@@ -34,6 +37,14 @@ class Footer extends StatelessWidget {
               index: 1,
               page: Devices(),
             ),
+            _buildFooterButton(
+              context,
+              iconFilled: Icons.account_circle,
+              iconOutlined: Icons.account_circle_outlined,
+              label: 'Меню',
+              index: 2,
+              page: SettingsScreen(),
+            ),
           ],
         ),
       ),
@@ -45,7 +56,7 @@ class Footer extends StatelessWidget {
       required IconData iconOutlined,
       required String label,
       required int index,
-      required Widget page}) { 
+      required Widget page}) {
     bool isActive = currentIndex == index;
 
     return Expanded(
@@ -61,10 +72,27 @@ class Footer extends StatelessWidget {
             ),
             onPressed: () {
               context.read<FooterBloc>().add(UpdateFooterIndex(index));
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => page),
-              );
+              if (index == 2) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return BlocProvider(
+                        create: (context) => SignInBloc(
+                          userRepository:
+                              context.read<AuthenticationBloc>().userRepository,
+                        ),
+                        child: SettingsScreen(),
+                      );
+                    },
+                  ),
+                );
+              } else {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => page),
+                );
+              }
             },
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -81,4 +109,3 @@ class Footer extends StatelessWidget {
     );
   }
 }
-
