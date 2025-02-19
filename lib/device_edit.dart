@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_energy/widgets/background_widget.dart';
 import 'header.dart';
-import 'footer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DeviceEdit extends StatefulWidget {
@@ -66,9 +65,9 @@ class _DeviceEditState extends State<DeviceEdit> {
     }
 
     CollectionReference devices = FirebaseFirestore.instance
-        .collection('users') // Звертаємося до колекції `users`
-        .doc(user.uid) // Беремо ID поточного користувача
-        .collection('devices'); // Звертаємося до його підколекції `devices`
+        .collection('users')
+        .doc(user.uid)
+        .collection('devices');
 
     final String name = _deviceNameController.text;
     final double consumptionPerHour =
@@ -84,11 +83,11 @@ class _DeviceEditState extends State<DeviceEdit> {
     };
 
     if (widget.deviceId.isEmpty) {
-      await devices.add(deviceData); // Додаємо новий пристрій
+      await devices.add(deviceData);
     } else {
       await devices
           .doc(widget.deviceId)
-          .update(deviceData); // Оновлюємо існуючий
+          .update(deviceData);
     }
     Navigator.pop(context);
   }
@@ -180,7 +179,6 @@ class _DeviceEditState extends State<DeviceEdit> {
           ],
         ),
       )),
-      bottomNavigationBar: Footer(),
     );
   }
 }

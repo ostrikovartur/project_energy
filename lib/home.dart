@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_energy/widgets/background_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_energy/widgets/footer/bloc/footer_bloc.dart';
 import 'header.dart';
-import 'footer.dart';
+import 'widgets/footer/footer.dart';
 import 'message.dart';
 
 class Home extends StatefulWidget {
@@ -150,7 +152,16 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          bottomNavigationBar: Footer(),
+          bottomNavigationBar: BlocBuilder<FooterBloc, FooterState>(
+            builder: (context, state) {
+              // Використовуємо стан з FooterBloc для оновлення індексу
+              int currentIndex = 0;
+              if (state is FooterIndexUpdated) {
+                currentIndex = state.currentIndex;
+              }
+              return Footer(currentIndex: currentIndex);
+            },
+          ),
         ),
         if (_showMessage)
           Message(

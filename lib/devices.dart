@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_energy/device_edit.dart';
 import 'package:project_energy/widgets/background_widget.dart';
 import 'header.dart';
-import 'footer.dart';
+import 'widgets/footer/footer.dart';
 
 class Devices extends StatefulWidget {
   const Devices({super.key});
@@ -73,7 +73,7 @@ class _DevicesState extends State<Devices> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream:
-                  _getUserDevicesStream(), // Використовуємо стрім конкретного користувача
+                  _getUserDevicesStream(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
@@ -122,7 +122,7 @@ class _DevicesState extends State<Devices> {
           ),
         ],
       )),
-      bottomNavigationBar: Footer(),
+      bottomNavigationBar: Footer(currentIndex: 1),
     );
   }
 }
