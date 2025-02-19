@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_energy/widgets/background_widget.dart';
@@ -42,19 +43,27 @@ class _HomeState extends State<Home> {
     return (dayRate + nightRate) * hours;
   }
 
-  void _calculateTotalConsumption() {
-    FirebaseFirestore.instance.collection('devices').get().then((snapshot) {
-      double total = 0;
-      for (var doc in snapshot.docs) {
-        if (doc['isInConsumptionList'] == true) {
-          total += doc['consumptionPerHour'];
-        }
+void _calculateTotalConsumption() {
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+  FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .collection('devices')
+      .get()
+      .then((snapshot) {
+    double total = 0;
+    for (var doc in snapshot.docs) {
+      if (doc['isInConsumptionList'] == true) {
+        total += doc['consumptionPerHour'];
       }
-      setState(() {
-        _totalConsumption = total;
-      });
+    }
+    setState(() {
+      _totalConsumption = total;
     });
-  }
+  }).catchError((error) {
+    print('Error calculating total consumption: $error');
+  });
+}
 
   @override
   void dispose() {
@@ -75,30 +84,75 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    color: Colors.grey[300],
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           'Сумарне споживання: $_totalConsumption W',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
                         ),
                         SizedBox(height: 8),
-                        Text('Блок 1 покриває споживання системи'),
-                        Text('Блок 2 не покриває споживання системи'),
+                        Text(
+                          'Блок 1 покриває споживання системи',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        Text(
+                          'Блок 2 не покриває споживання системи',
+                          style: TextStyle(color: Colors.white70),
+                        ),
                       ],
                     ),
                   ),
                   SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _calculateTotalConsumption,
-                    child: Text('Список споживання'),
+                  Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: _calculateTotalConsumption,
+                      child: Text('Список споживання'),
+                    ),
                   ),
                   SizedBox(height: 20),
+                  Text(
+                    'Калькулятор вартості споживання',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   Container(
-                    color: Colors.grey[300],
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
