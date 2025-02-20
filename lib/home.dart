@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_energy/consumption_list.dart';
 import 'package:project_energy/widgets/background_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_energy/widgets/footer/bloc/footer_bloc.dart';
 import 'header.dart';
 import 'widgets/footer/footer.dart';
-import 'message.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,7 +20,7 @@ class _HomeState extends State<Home> {
   final TextEditingController _hoursController = TextEditingController();
   double _dayCost = 0;
   double _nightCost = 0;
-  bool _showMessage = true;
+  //bool _showMessage = true;
   double _totalConsumption = 0;
 
   @override
@@ -43,27 +43,27 @@ class _HomeState extends State<Home> {
     return (dayRate + nightRate) * hours;
   }
 
-void _calculateTotalConsumption() {
-  final userId = FirebaseAuth.instance.currentUser?.uid;
-  FirebaseFirestore.instance
-      .collection('users')
-      .doc(userId)
-      .collection('devices')
-      .get()
-      .then((snapshot) {
-    double total = 0;
-    for (var doc in snapshot.docs) {
-      if (doc['isInConsumptionList'] == true) {
-        total += doc['consumptionPerHour'];
+  void _calculateTotalConsumption() {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('devices')
+        .get()
+        .then((snapshot) {
+      double total = 0;
+      for (var doc in snapshot.docs) {
+        if (doc['isInConsumptionList'] == true) {
+          total += doc['consumptionPerHour'];
+        }
       }
-    }
-    setState(() {
-      _totalConsumption = total;
+      setState(() {
+        _totalConsumption = total;
+      });
+    }).catchError((error) {
+      print('Error calculating total consumption: $error');
     });
-  }).catchError((error) {
-    print('Error calculating total consumption: $error');
-  });
-}
+  }
 
   @override
   void dispose() {
@@ -125,7 +125,16 @@ void _calculateTotalConsumption() {
                     width: double.infinity,
                     alignment: Alignment.center,
                     child: ElevatedButton(
-                      onPressed: _calculateTotalConsumption,
+                      onPressed: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ConsumptionListScreen()),
+                        );
+                        if (result == true) {
+                          _calculateTotalConsumption();
+                        }
+                      },
                       child: Text('Список споживання'),
                     ),
                   ),
@@ -216,15 +225,15 @@ void _calculateTotalConsumption() {
             },
           ),
         ),
-        if (_showMessage)
-          Message(
-            message: 'Це тестове сповіщення',
-            onClose: () {
-              setState(() {
-                _showMessage = false;
-              });
-            },
-          ),
+        // if (_showMessage)
+        //   Message(
+        //     message: 'Це тестове сповіщення',
+        //     onClose: () {
+        //       setState(() {
+        //         _showMessage = false;
+        //       });
+        //     },
+        //   ),
       ],
     );
   }

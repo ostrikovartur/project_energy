@@ -78,7 +78,6 @@ class _DevicesState extends State<Devices> {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 }
-
                 final devices = snapshot.data!.docs;
                 final displayedDevices =
                     _showAllDevices ? devices : devices.take(3).toList();
