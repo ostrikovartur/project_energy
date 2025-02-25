@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "83780161459-3bc0uuqq31bj2qgsc03m59mfmis5i7l3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project_energy",
+            "certificate_hash": "eb4a369255159b8275373fec220d9b2f9fb42679"
+          }
+        },
+        {
           "client_id": "83780161459-68cs8k3tug9rsvj1eiikgtads5mc7j4s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
