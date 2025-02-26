@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_energy/authenticationSecond/user/models/user_model.dart';
 import 'package:project_energy/authenticationSecond/user/repository/user_repository.dart';
-import 'package:project_energy/device.dart';
 
 class FirebaseUserRepo implements UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -36,9 +35,7 @@ class FirebaseUserRepo implements UserRepository {
   @override
   Future<UserCredential> signInWithCredential(AuthCredential credential) async {
     try {
-      final userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
-
+      final userCredential = await _firebaseAuth.signInWithCredential(credential);
       final user = userCredential.user;
       if (user != null) {
         final userDoc = await usersCollection.doc(user.uid).get();
@@ -66,8 +63,8 @@ class FirebaseUserRepo implements UserRepository {
       userModel = userModel.copyWith(userId: user.user!.uid);
       
       await setUserData(userModel);
-
       await _createUserDevicesCollection(userModel.userId);
+      await _createUserPowerDevicesCollection(userModel.userId);
 
       return userModel;
     } catch (e) {
@@ -78,21 +75,18 @@ class FirebaseUserRepo implements UserRepository {
 
   Future<void> _createUserDevicesCollection(String userId) async {
     try {
-      final devicesCollection =
-          usersCollection.doc(userId).collection('devices');
-
-      // Додаємо дефолтний пристрій
-      final defaultDevice = Device(
-        id: 'default_device',
-        name: 'Default Device',
-        consumptionPerHour: 5.0,
-        consumptionPerYear: 50.0,
-        isInConsumptionList: false,
-      );
-
-      await devicesCollection.doc(defaultDevice.id).set(defaultDevice.toMap());
+      await usersCollection.doc(userId).collection('devices');
     } catch (e) {
       log("Error creating devices collection: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<void> _createUserPowerDevicesCollection(String userId) async { // перевірити чи працюють методи
+    try {
+      await usersCollection.doc(userId).collection('power_devices');
+    } catch (e) {
+      log("Error creating power devices collection: ${e.toString()}");
       rethrow;
     }
   }
