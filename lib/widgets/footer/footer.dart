@@ -4,6 +4,7 @@ import 'package:project_energy/authenticationSecond/bloc/authentication_bloc.dar
 import 'package:project_energy/authenticationSecond/signin/bloc/signin_bloc.dart';
 import 'package:project_energy/devices.dart';
 import 'package:project_energy/home.dart';
+import 'package:project_energy/powerDevices/screen/power_device_screen.dart';
 import 'package:project_energy/settings/view/settings_screen.dart';
 import 'package:project_energy/widgets/footer/bloc/footer_bloc.dart';
 
@@ -39,10 +40,18 @@ class Footer extends StatelessWidget {
             ),
             _buildFooterButton(
               context,
+              iconFilled: Icons.power,
+              iconOutlined: Icons.power_outlined,
+              label: 'Станція',
+              index: 2,
+              page: PowerDeviceScreen(),
+            ),
+            _buildFooterButton(
+              context,
               iconFilled: Icons.account_circle,
               iconOutlined: Icons.account_circle_outlined,
               label: 'Меню',
-              index: 2,
+              index: 3,
               page: SettingsScreen(),
             ),
           ],
@@ -72,7 +81,7 @@ class Footer extends StatelessWidget {
             ),
             onPressed: () {
               context.read<FooterBloc>().add(UpdateFooterIndex(index));
-              if (index == 2) {
+              if (index == 3) {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
