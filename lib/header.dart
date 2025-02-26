@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project_energy/authenticationSecond/bloc/authentication_bloc.dart';
-import 'package:project_energy/authenticationSecond/mainScreen/main_screen.dart';
-import 'package:project_energy/authenticationSecond/signin/bloc/signin_bloc.dart';
-import 'package:project_energy/authorization.dart';
-import 'package:project_energy/devices.dart';
-import 'package:project_energy/home.dart';
-import 'package:project_energy/settings/view/settings_screen.dart';
+// import 'package:project_energy/powerDevices/screen/power_device_edit_screen.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:project_energy/authenticationSecond/bloc/authentication_bloc.dart';
+// import 'package:project_energy/authenticationSecond/mainScreen/main_screen.dart';
+// import 'package:project_energy/authenticationSecond/signin/bloc/signin_bloc.dart';
+// import 'package:project_energy/authorization.dart';
+// import 'package:project_energy/devices.dart';
+// import 'package:project_energy/home.dart';
+// import 'package:project_energy/settings/view/settings_screen.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final List<Widget>? actions;
 
-  const Header({super.key, required this.title});
+  const Header({super.key, required this.title, this.actions});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       backgroundColor: Colors.transparent, // Прозорий фон
       elevation: 0, // Без тіні
+      actions: actions,
       /*
       actions: [
         PopupMenuButton<String>(
