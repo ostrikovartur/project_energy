@@ -4,7 +4,7 @@ import 'package:project_energy/authenticationSecond/bloc/authentication_bloc.dar
 import 'package:project_energy/authenticationSecond/signin/bloc/signin_bloc.dart';
 import 'package:project_energy/devices.dart';
 import 'package:project_energy/home.dart';
-import 'package:project_energy/powerDevices/screen/power_device_screen.dart';
+import 'package:project_energy/powerDevices/screen/power_devices_list_screen.dart';
 import 'package:project_energy/settings/view/settings_screen.dart';
 import 'package:project_energy/widgets/footer/bloc/footer_bloc.dart';
 
@@ -44,7 +44,7 @@ class Footer extends StatelessWidget {
               iconOutlined: Icons.power_outlined,
               label: 'Станція',
               index: 2,
-              page: PowerDeviceScreen(),
+              page: PowerDevicesListScreen(),
             ),
             _buildFooterButton(
               context,
