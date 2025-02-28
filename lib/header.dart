@@ -20,9 +20,16 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(title),
       centerTitle: true,
-      backgroundColor: Colors.transparent, // Прозорий фон
-      elevation: 0, // Без тіні
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       actions: actions,
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+
       /*
       actions: [
         PopupMenuButton<String>(
@@ -96,9 +103,3 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
       */
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
-}
