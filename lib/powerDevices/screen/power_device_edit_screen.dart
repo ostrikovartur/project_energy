@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:project_energy/powerDevices/power_device.dart';
 
 class PowerDeviceEditScreen extends StatefulWidget {
-  const PowerDeviceEditScreen({super.key});
+  final PowerDevice powerDevice;
+
+  const PowerDeviceEditScreen({super.key, required this.powerDevice});
 
   @override
   _PowerDeviceEditScreenState createState() => _PowerDeviceEditScreenState();
@@ -15,39 +18,71 @@ class _PowerDeviceEditScreenState extends State<PowerDeviceEditScreen> {
   final _maxPowerController = TextEditingController();
   final _currentChargeController = TextEditingController();
 
-  Future<void> _savePowerDevice() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final name = _nameController.text;
-    final capacity = int.tryParse(_capacityController.text) ?? 0;
-    final maxPower = int.tryParse(_maxPowerController.text) ?? 0;
-    final currentCharge = int.tryParse(_currentChargeController.text) ?? 0;
-
-    if (name.isEmpty || capacity <= 0 || maxPower <= 0) {
-      return;
-    }
-
-    try {
-      final newDeviceRef = FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('power_devices')
-          .doc();
-
-      await newDeviceRef.set({
-        'name': name,
-        'capacityWh': capacity,
-        'maxPowerOutput': maxPower,
-        'currentChargeWh': currentCharge,
-        'isCharging': false,
-      });
-
-      Navigator.pop(context); 
-    } catch (e) {
-      print("Error saving power device: $e");
-    }
+  @override
+  void initState() {
+    super.initState();
+    // Ініціалізація контролерів значеннями з powerDevice
+    _nameController.text = widget.powerDevice.name;
+    _capacityController.text = widget.powerDevice.capacityWh.toString();
+    _maxPowerController.text = widget.powerDevice.maxPowerOutput.toString();
+    _currentChargeController.text =
+        widget.powerDevice.currentChargeWh.toString();
   }
+
+  void _savePowerDevice() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Користувач не авторизований')),
+    );
+    return;
+  }
+
+  final name = _nameController.text;
+  final capacity = double.tryParse(_capacityController.text) ?? 0;
+  final maxPower = double.tryParse(_maxPowerController.text) ?? 0;
+  final currentCharge = double.tryParse(_currentChargeController.text) ?? 0;
+
+  if (name.isEmpty || capacity <= 0 || maxPower <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Будь ласка, заповніть усі поля коректно')),
+    );
+    return;
+  }
+
+  try {
+    final powerDevicesCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('power_devices');
+
+    final powerDeviceData = {
+      'name': name,
+      'capacityWh': capacity,
+      'maxPowerOutput': maxPower,
+      'currentChargeWh': currentCharge,
+      'isCharging': widget.powerDevice.id.isEmpty ? false : widget.powerDevice.isCharging, // Додаємо isCharging тільки при створенні нового пристрою
+    };
+
+    if (widget.powerDevice.id.isEmpty) {
+      // Створюємо новий пристрій
+      await powerDevicesCollection.add(powerDeviceData);
+    } else {
+      // Оновлюємо існуючий пристрій
+      await powerDevicesCollection
+          .doc(widget.powerDevice.id)
+          .update(powerDeviceData);
+    }
+
+    Navigator.pop(context);
+  } catch (e) {
+    print("Error saving power device: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Помилка при збереженні пристрою')),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
