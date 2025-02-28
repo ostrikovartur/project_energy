@@ -13,7 +13,7 @@ class PowerDevice {
   final double capacityWh; // Загальна ємність акумулятора (Wh)
   final double maxPowerOutput; // Макс. потужність, яку можна віддати (W)
   double currentChargeWh; // Поточний заряд акумулятора (Wh)
-  final bool isCharging; // Чи заряджається він зараз
+  bool isCharging; // Чи заряджається він зараз
 
   PowerDevice({
     required this.id,
