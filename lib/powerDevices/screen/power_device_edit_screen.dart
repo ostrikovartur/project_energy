@@ -61,14 +61,12 @@ class _PowerDeviceEditScreenState extends State<PowerDeviceEditScreen> {
       'capacityWh': capacity,
       'maxPowerOutput': maxPower,
       'currentChargeWh': currentCharge,
-      'isCharging': widget.powerDevice.id.isEmpty ? false : widget.powerDevice.isCharging, // Додаємо isCharging тільки при створенні нового пристрою
+      'isCharging': widget.powerDevice.id.isEmpty ? false : widget.powerDevice.isCharging,
     };
 
     if (widget.powerDevice.id.isEmpty) {
-      // Створюємо новий пристрій
       await powerDevicesCollection.add(powerDeviceData);
     } else {
-      // Оновлюємо існуючий пристрій
       await powerDevicesCollection
           .doc(widget.powerDevice.id)
           .update(powerDeviceData);
