@@ -66,13 +66,11 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
         ? ((widget.powerDevice.currentChargeWh / widget.powerDevice.capacityWh) * 100).round()
         : 0;
 
-    Color batteryColor;
-    if (chargePercentage >= 70) {
-      batteryColor = Colors.green;
-    } else if (chargePercentage >= 30) {
-      batteryColor = Colors.orange;
+    Color circleColor;
+    if (_isCharging) {
+      circleColor = Colors.green;
     } else {
-      batteryColor = Colors.red;
+      circleColor = Colors.red;
     }
 
     return Scaffold(
@@ -98,77 +96,92 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
       body: BackgroundWidget(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: _toggleChargingState, // обробка натискання на коло
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: CircularProgressIndicator(
-                          value: chargePercentage / 100,
-                          strokeWidth: 40,
-                          valueColor: AlwaysStoppedAnimation(batteryColor),
-                          backgroundColor: Colors.grey[300],
-                        ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: GestureDetector(
+                    onTap: _toggleChargingState, // обробка натискання на коло
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: circleColor.withOpacity(0.2),
+                        border: Border.all(color: circleColor, width: 4),
                       ),
-                      if (_isCharging)
-                        Positioned(
-                          top: 20,
-                          child: Icon(
-                            Icons.flash_on,
-                            color: Colors.yellow,
-                            size: 40,
+                      child: Center(
+                        child: Text(
+                          "$chargePercentage%",
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      Text(
-                        '$chargePercentage%',
-                        style: GoogleFonts.raleway(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Детальна інформація',
-                style: GoogleFonts.raleway(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                '• Назва: ${widget.powerDevice.name}',
-                style: GoogleFonts.raleway(fontSize: 18),
-              ),
-              Text(
-                '• Ємність: ${widget.powerDevice.capacityWh} Вт·год',
-                style: GoogleFonts.raleway(fontSize: 18),
-              ),
-              Text(
-                '• Поточний заряд: ${widget.powerDevice.currentChargeWh} Вт·год',
-                style: GoogleFonts.raleway(fontSize: 18),
-              ),
-              Text(
-                '• Заряд у відсотках: $chargePercentage%',
-                style: GoogleFonts.raleway(fontSize: 18),
-              ),
-              Text(
-                '• Макс. вихідна потужність: ${widget.powerDevice.maxPowerOutput} Вт',
-                style: GoogleFonts.raleway(fontSize: 18),
-              ),
-              Text(
-                '• Заряджається зараз: ${_isCharging ? "Так" : "Ні"}',
-                style: GoogleFonts.raleway(fontSize: 18),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Стан зарядки: ', style: TextStyle(fontSize: 16)),
+                    Text(
+                      _isCharging ? 'Заряджається' : 'Не заряджається',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: _isCharging ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.power),
+                  title: const Text('Потужність'),
+                  trailing: const Text('22 кВт'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.timer),
+                  title: const Text('Час роботи'),
+                  trailing: const Text('1 год 15 хв'),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Детальна інформація',
+                  style: GoogleFonts.raleway(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '• Назва: ${widget.powerDevice.name}',
+                  style: GoogleFonts.raleway(fontSize: 18),
+                ),
+                Text(
+                  '• Ємність: ${widget.powerDevice.capacityWh} Вт·год',
+                  style: GoogleFonts.raleway(fontSize: 18),
+                ),
+                Text(
+                  '• Поточний заряд: ${widget.powerDevice.currentChargeWh} Вт·год',
+                  style: GoogleFonts.raleway(fontSize: 18),
+                ),
+                Text(
+                  '• Заряд у відсотках: $chargePercentage%',
+                  style: GoogleFonts.raleway(fontSize: 18),
+                ),
+                Text(
+                  '• Макс. вихідна потужність: ${widget.powerDevice.maxPowerOutput} Вт',
+                  style: GoogleFonts.raleway(fontSize: 18),
+                ),
+                Text(
+                  '• Заряджається зараз: ${_isCharging ? "Так" : "Ні"}',
+                  style: GoogleFonts.raleway(fontSize: 18),
+                ),
+              ],
+            ),
           ),
         ),
       ),
