@@ -1,12 +1,5 @@
 import 'package:project_energy/device.dart';
 
-  // final String id;
-  // final String name;
-  // final double capasity; //Вт/год
-  // final double outputPower; //Вт
-  // final double maxOutputPower; //Вт
-  // final double chargeTime; //год
-
 class PowerDevice {
   final String id;
   final String name;
