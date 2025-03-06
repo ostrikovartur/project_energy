@@ -16,18 +16,37 @@ class PowerDeviceScreen extends StatefulWidget {
   _PowerDeviceScreenState createState() => _PowerDeviceScreenState();
 }
 
-class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTickerProviderStateMixin {
+class _PowerDeviceScreenState extends State<PowerDeviceScreen>
+    with SingleTickerProviderStateMixin {
   late bool _isCharging;
+  late int _chargePercentage;
+  bool _isEditing = false; // Змінна для відстеження режиму редагування
+  late bool _initialChargingState;
+  late int _initialChargePercentage;
 
   @override
   void initState() {
     super.initState();
     _isCharging = widget.powerDevice.isCharging;
+    _chargePercentage = (widget.powerDevice.capacityWh > 0)
+        ? ((widget.powerDevice.currentChargeWh /
+                    widget.powerDevice.capacityWh) *
+                100)
+            .round()
+        : 0;
+
+    // Збережемо початкові значення для перевірки змін
+    _initialChargingState = _isCharging;
+    _initialChargePercentage = _chargePercentage;
   }
 
   @override
   void dispose() {
-    _saveChargingState();
+    // Перевіряємо, чи змінився стан перед збереженням
+    if (_isCharging != _initialChargingState ||
+        _chargePercentage != _initialChargePercentage) {
+      _saveChargingState();
+    }
     super.dispose();
   }
 
@@ -45,6 +64,8 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
 
       await deviceRef.update({
         'isCharging': _isCharging,
+        'currentChargeWh':
+            (widget.powerDevice.capacityWh * _chargePercentage / 100).round(),
       });
 
       print("Змінено стан заряджання для пристрою ${widget.powerDevice.name}");
@@ -60,12 +81,23 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
     });
   }
 
+  // Функція для оновлення заряду через слайдер
+  void _updateChargePercentage(double newValue) {
+    setState(() {
+      _chargePercentage = newValue.toInt();
+    });
+  }
+
+  // Функція для збереження змін заряду
+  void _saveCharge() {
+    setState(() {
+      _isEditing = false;
+      _saveChargingState();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final chargePercentage = (widget.powerDevice.capacityWh > 0)
-        ? ((widget.powerDevice.currentChargeWh / widget.powerDevice.capacityWh) * 100).round()
-        : 0;
-
     Color circleColor;
     if (_isCharging) {
       circleColor = Colors.green;
@@ -85,7 +117,8 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
                 context,
                 MaterialPageRoute(
                   builder: (context) => PowerDeviceEditScreen(
-                    powerDevice: widget.powerDevice, // передаємо пристрій для редагування
+                    powerDevice: widget
+                        .powerDevice, // передаємо пристрій для редагування
                   ),
                 ),
               );
@@ -103,31 +136,72 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
                 Center(
                   child: GestureDetector(
                     onTap: _toggleChargingState, // обробка натискання на коло
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: circleColor.withOpacity(0.2),
-                        border: Border.all(color: circleColor, width: 4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "$chargePercentage%",
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
+                    onLongPress: () {
+                      setState(() {
+                        _isEditing = true; // Перехід у режим редагування
+                      });
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: circleColor.withOpacity(0.2),
+                            border: Border.all(color: circleColor, width: 4),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "$_chargePercentage%",
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        if (_isEditing) // Іконка редагування для візуальної підказки
+                          const Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Icon(
+                              Icons.edit,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
+                if (_isEditing) ...[
+                  const Divider(),
+                  const Text(
+                    'Оновіть відсоток заряду',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  Slider(
+                    value: _chargePercentage.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 100,
+                    label: "$_chargePercentage%",
+                    onChanged: (value) => _updateChargePercentage(value),
+                  ),
+                  ElevatedButton(
+                    onPressed: _saveCharge,
+                    child: const Text('Зберегти'),
+                  ),
+                ],
+                const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Стан зарядки: ', style: TextStyle(fontSize: 16)),
+                    const Text('Стан зарядки: ',
+                        style: TextStyle(fontSize: 16)),
                     Text(
                       _isCharging ? 'Заряджається' : 'Не заряджається',
                       style: TextStyle(
@@ -143,17 +217,18 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
                 ListTile(
                   leading: const Icon(Icons.power),
                   title: const Text('Потужність'),
-                  trailing: const Text('22 кВт'),
+                  trailing: Text('${widget.powerDevice.maxPowerOutput} Вт'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.timer),
                   title: const Text('Час роботи'),
-                  trailing: const Text('1 год 15 хв'),
+                  trailing: Text('${widget.powerDevice.currentChargeWh} год'),
                 ),
                 const SizedBox(height: 20),
                 Text(
                   'Детальна інформація',
-                  style: GoogleFonts.raleway(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.raleway(
+                      fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -169,7 +244,7 @@ class _PowerDeviceScreenState extends State<PowerDeviceScreen> with SingleTicker
                   style: GoogleFonts.raleway(fontSize: 18),
                 ),
                 Text(
-                  '• Заряд у відсотках: $chargePercentage%',
+                  '• Заряд у відсотках: $_chargePercentage%',
                   style: GoogleFonts.raleway(fontSize: 18),
                 ),
                 Text(
