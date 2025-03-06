@@ -30,57 +30,58 @@ class _PowerDeviceEditScreenState extends State<PowerDeviceEditScreen> {
   }
 
   void _savePowerDevice() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Користувач не авторизований')),
-    );
-    return;
-  }
-
-  final name = _nameController.text;
-  final capacity = double.tryParse(_capacityController.text) ?? 0;
-  final maxPower = double.tryParse(_maxPowerController.text) ?? 0;
-  final currentCharge = double.tryParse(_currentChargeController.text) ?? 0;
-
-  if (name.isEmpty || capacity <= 0 || maxPower <= 0) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Будь ласка, заповніть усі поля коректно')),
-    );
-    return;
-  }
-
-  try {
-    final powerDevicesCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('power_devices');
-
-    final powerDeviceData = {
-      'name': name,
-      'capacityWh': capacity,
-      'maxPowerOutput': maxPower,
-      'currentChargeWh': currentCharge,
-      'isCharging': widget.powerDevice.id.isEmpty ? false : widget.powerDevice.isCharging,
-    };
-
-    if (widget.powerDevice.id.isEmpty) {
-      await powerDevicesCollection.add(powerDeviceData);
-    } else {
-      await powerDevicesCollection
-          .doc(widget.powerDevice.id)
-          .update(powerDeviceData);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Користувач не авторизований')),
+      );
+      return;
     }
 
-    Navigator.pop(context);
-  } catch (e) {
-    print("Error saving power device: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Помилка при збереженні пристрою')),
-    );
-  }
-}
+    final name = _nameController.text;
+    final capacity = double.tryParse(_capacityController.text) ?? 0;
+    final maxPower = double.tryParse(_maxPowerController.text) ?? 0;
+    final currentCharge = double.tryParse(_currentChargeController.text) ?? 0;
 
+    if (name.isEmpty || capacity <= 0 || maxPower <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Будь ласка, заповніть усі поля коректно')),
+      );
+      return;
+    }
+
+    try {
+      final powerDevicesCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('power_devices');
+
+      final powerDeviceData = {
+        'name': name,
+        'capacityWh': capacity,
+        'maxPowerOutput': maxPower,
+        'currentChargeWh': currentCharge,
+        'isCharging': widget.powerDevice.id.isEmpty
+            ? false
+            : widget.powerDevice.isCharging,
+      };
+
+      if (widget.powerDevice.id.isEmpty) {
+        await powerDevicesCollection.add(powerDeviceData);
+      } else {
+        await powerDevicesCollection
+            .doc(widget.powerDevice.id)
+            .update(powerDeviceData);
+      }
+
+      Navigator.pop(context);
+    } catch (e) {
+      print("Error saving power device: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Помилка при збереженні пристрою')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
